@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>A Birthday by the Sea</title>
+    <meta name="description" content="An interactive, cinematic, and romantic seaside birthday storytelling experience." />
+    <meta property="og:title" content="A Birthday by the Sea" />
+    <meta property="og:description" content="An interactive, cinematic, and romantic seaside birthday storytelling experience." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Google Fonts for romantic seaside typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- Main Interactive Sea Viewport -->
+    <main id="scene-viewport" class="mood-day">
+      
+      <!-- Celestial Body (Sun / Sunset Orb / Moon) -->
+      <div id="celestial-body" aria-hidden="true"></div>
+
+      <!-- Small Seaside Birds Gliding Across the Upper Sky -->
+      <div class="sky-birds-container" aria-hidden="true">
+        <!-- Bird 1 (High Leader) -->
+        <div class="sea-bird bird-1">
+          <svg viewBox="0 0 36 18" class="bird-svg">
+            <path class="bird-wings" d="M 0,8 Q 9,-2 18,7 Q 27,-2 36,8 Q 27,4 18,11 Q 9,4 0,8 Z"></path>
+          </svg>
+        </div>
+        <!-- Bird 2 (Slightly Lower & Slower) -->
+        <div class="sea-bird bird-2">
+          <svg viewBox="0 0 32 16" class="bird-svg">
+            <path class="bird-wings" d="M 0,7 Q 8,-2 16,6 Q 24,-2 32,7 Q 24,3 16,9 Q 8,3 0,7 Z"></path>
+          </svg>
+        </div>
+        <!-- Bird 3 (Follower) -->
+        <div class="sea-bird bird-3">
+          <svg viewBox="0 0 28 14" class="bird-svg">
+            <path class="bird-wings" d="M 0,6 Q 7,-1 14,5 Q 21,-1 28,6 Q 21,3 14,8 Q 7,3 0,6 Z"></path>
+          </svg>
+        </div>
+        <!-- Bird 4 (Distant Small) -->
+        <div class="sea-bird bird-4">
+          <svg viewBox="0 0 24 12" class="bird-svg">
+            <path class="bird-wings" d="M 0,5 Q 6,-1 12,4 Q 18,-1 24,5 Q 18,2 12,6 Q 6,2 0,5 Z"></path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Glowing Sea Dust & Sparkles Canvas -->
+      <canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+      <!-- Multi-Layered Undulating Ocean Waves -->
+      <div class="waves-container" aria-hidden="true">
+        <!-- Deep/Back Wave -->
+        <svg class="wave-svg wave-back" viewBox="0 0 1200 120" preserveAspectRatio="none">
+          <path d="M0,0 C150,90 350,-40 500,60 C650,160 900,10 1200,40 L1200,120 L0,120 Z" fill="rgba(14, 116, 144, 0.4)"></path>
+        </svg>
+        <!-- Mid Wave -->
+        <svg class="wave-svg wave-mid" viewBox="0 0 1200 120" preserveAspectRatio="none">
+          <path d="M0,20 C200,100 450,0 700,70 C950,140 1050,30 1200,50 L1200,120 L0,120 Z" fill="rgba(6, 78, 119, 0.6)"></path>
+        </svg>
+        <!-- Front Foam Wave -->
+        <svg class="wave-svg wave-front" viewBox="0 0 1200 120" preserveAspectRatio="none">
+          <path d="M0,30 C300,110 600,10 850,80 C1050,130 1150,50 1200,70 L1200,120 L0,120 Z" fill="rgba(3, 30, 56, 0.85)"></path>
+        </svg>
+      </div>
+
+      <!-- Floating Mini Music Player (Starts immediately after puzzle solved) -->
+      <div id="floating-music-btn" style="display: none;" role="button" tabindex="0" aria-label="Toggle background music">
+        <span class="music-disc"></span>
+        <span id="music-btn-text">To the Bone - Playing</span>
+      </div>
+
+      <!-- Light Bloom Transition Overlay -->
+      <div id="bloom-flash" aria-hidden="true"></div>
+
+      <!-- ================================================================
+           STAGE 1: LANDING & PUZZLE
+           ================================================================ -->
+      <section id="stage-landing" class="stage-section active" aria-label="Opening puzzle stage">
+        <h1 class="editorial-title">Something special is waiting for you...</h1>
+        <p class="editorial-sub">Satukan kepingan puzzle kenangan pantai ini (ketuk atau geser kepingan untuk menukarnya).</p>
+
+        <div id="puzzle-container">
+          <!-- Puzzle Control Bar -->
+          <div class="puzzle-top-bar">
+            <button id="btn-toggle-preview" class="btn-micro" aria-label="Lihat contoh gambar asli">
+              🖼️ Lihat Contoh
+            </button>
+            <button id="btn-toggle-numbers" class="btn-micro" aria-label="Tampilkan nomor bantuan">
+              🔢 Nomor Bantuan
+            </button>
+          </div>
+
+          <!-- Mini Preview Popover -->
+          <div id="puzzle-preview-card" class="puzzle-preview-card" style="display: none;">
+            <img src="/assets/images/puzzle.jpeg" alt="Foto Contoh Asli" />
+            <span>Target Foto Kenangan</span>
+          </div>
+
+          <!-- The Interactive 3x3 Puzzle Board -->
+          <div id="puzzle-board" class="puzzle-board" role="grid" aria-label="Susun puzzle pantai">
+            <!-- 9 Interactive Tiles rendered via script.js -->
+          </div>
+
+          <!-- Bottom Status & Actions -->
+          <div class="puzzle-status-bar">
+            <div class="puzzle-progress-wrap">
+              <span id="puzzle-status">Tersusun: 0 / 9</span>
+              <div class="puzzle-progress-track">
+                <div id="puzzle-progress-bar" style="width: 0%;"></div>
+              </div>
+            </div>
+            <button id="btn-solve-puzzle" class="accessible-help-btn" aria-label="Bantuan selesaikan puzzle">
+              Selesaikan Puzzle ✨
+            </button>
+          </div>
+
+          <div id="puzzle-complete-banner" style="display: none; margin-top: 14px; text-align: center;">
+            <p class="editorial-sub" style="color: #fef08a; font-weight: 500;">
+              ✨ You found it... Gerbang kenangan telah terbuka...
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           STAGE 2: MAKE A WISH
+           ================================================================ -->
+      <section id="stage-wish" class="stage-section" aria-label="Make a wish stage">
+        <h2 class="editorial-title">HAPPY BIRTHDAY</h2>
+        <p id="wish-subtitle" class="editorial-sub">Make a wish... Sentuh atau tiup lilin untuk memadamkannya.</p>
+
+        <div id="cake-stage-wrapper">
+          <div class="cake-scene">
+            
+            <!-- Artisan Cake with Chocolate Drips, Curved Candles & Cherries Underneath -->
+            <div class="cake-structure cake-pink-choco">
+
+              <!-- Curved Arc of Candles Following Cake Contour on Top of Cake -->
+              <div class="candles-arc-container" role="group" aria-label="Lilin ulang tahun melingkar">
+                <!-- Candle 1 -->
+                <div class="candle-pod pod-1">
+                  <div id="candle-1" class="candle-item" role="button" tabindex="0" aria-label="Lilin 1">
+                    <div class="candle-flame-wrap">
+                      <div class="candle-flame"></div>
+                      <div class="smoke-puff"></div>
+                    </div>
+                    <div class="candle-wick"></div>
+                    <div class="candle-stick candle-stick-pink"></div>
+                    <div class="candle-cream-base"></div>
+                  </div>
+                </div>
+
+                <!-- Candle 2 -->
+                <div class="candle-pod pod-2">
+                  <div id="candle-2" class="candle-item" role="button" tabindex="0" aria-label="Lilin 2">
+                    <div class="candle-flame-wrap">
+                      <div class="candle-flame"></div>
+                      <div class="smoke-puff"></div>
+                    </div>
+                    <div class="candle-wick"></div>
+                    <div class="candle-stick candle-stick-pink"></div>
+                    <div class="candle-cream-base"></div>
+                  </div>
+                </div>
+
+                <!-- Candle 3 (Center) -->
+                <div class="candle-pod pod-3">
+                  <div id="candle-3" class="candle-item" role="button" tabindex="0" aria-label="Lilin 3">
+                    <div class="candle-flame-wrap">
+                      <div class="candle-flame"></div>
+                      <div class="smoke-puff"></div>
+                    </div>
+                    <div class="candle-wick"></div>
+                    <div class="candle-stick candle-stick-pink"></div>
+                    <div class="candle-cream-base"></div>
+                  </div>
+                </div>
+
+                <!-- Candle 4 -->
+                <div class="candle-pod pod-4">
+                  <div id="candle-4" class="candle-item" role="button" tabindex="0" aria-label="Lilin 4">
+                    <div class="candle-flame-wrap">
+                      <div class="candle-flame"></div>
+                      <div class="smoke-puff"></div>
+                    </div>
+                    <div class="candle-wick"></div>
+                    <div class="candle-stick candle-stick-pink"></div>
+                    <div class="candle-cream-base"></div>
+                  </div>
+                </div>
+
+                <!-- Candle 5 -->
+                <div class="candle-pod pod-5">
+                  <div id="candle-5" class="candle-item" role="button" tabindex="0" aria-label="Lilin 5">
+                    <div class="candle-flame-wrap">
+                      <div class="candle-flame"></div>
+                      <div class="smoke-puff"></div>
+                    </div>
+                    <div class="candle-wick"></div>
+                    <div class="candle-stick candle-stick-pink"></div>
+                    <div class="candle-cream-base"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Main Round Cake Cylinder with Chocolate Drips Running Down -->
+              <div class="pink-choco-cylinder">
+                <!-- Luscious Melted Chocolate Drip Ganache on Cake Body -->
+                <div class="choco-melt-drips-layer">
+                  <svg class="choco-melt-svg" viewBox="0 0 260 55" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="chocoDripGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#3d1c10" />
+                        <stop offset="40%" stop-color="#2c1309" />
+                        <stop offset="100%" stop-color="#160803" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M0,0 L260,0 L260,12 Q252,12 246,22 Q240,32 234,32 Q228,32 222,18 Q216,12 206,12 Q196,12 190,30 Q184,48 176,48 Q168,48 162,26 Q156,12 144,12 Q136,12 130,26 Q124,40 116,40 Q108,40 102,20 Q96,12 84,12 Q76,12 70,28 Q64,44 56,44 Q48,44 42,22 Q36,12 24,12 Q14,12 8,24 Q4,30 0,20 Z" fill="url(#chocoDripGrad)"></path>
+                  </svg>
+                  <div class="choco-drip-shine"></div>
+                </div>
+                <!-- Concentric Piped Ridged Cream Border Ring on Top (like photo) -->
+                <div class="cake-top-recessed">
+                  <div class="concentric-piped-rim"></div>
+                  <!-- Scattered Sugar Pearls / Dragees in Center -->
+                  <div class="scattered-pearls-group">
+                    <span class="sugar-pearl p1"></span>
+                    <span class="sugar-pearl p2"></span>
+                    <span class="sugar-pearl p3"></span>
+                    <span class="sugar-pearl p4"></span>
+                    <span class="sugar-pearl p5"></span>
+                    <span class="sugar-pearl p6"></span>
+                    <span class="sugar-pearl p7"></span>
+                    <span class="sugar-pearl p8"></span>
+                    <span class="sugar-pearl p9"></span>
+                    <span class="sugar-pearl p10"></span>
+                    <span class="sugar-pearl p11"></span>
+                    <span class="sugar-pearl p12"></span>
+                  </div>
+                </div>
+
+                <!-- Piped Floral Arrangements: Clusters of Roses & Rosebuds (Like Photo) -->
+                <!-- Top Right Lush Blooming Rose Bouquet -->
+                <div class="floral-cluster-top-right">
+                  <!-- Large Blooming Rose 1 -->
+                  <svg class="artisan-rose rose-large-1" viewBox="0 0 64 64">
+                    <defs>
+                      <radialGradient id="pinkChocoRoseGrad1" cx="45%" cy="40%" r="55%">
+                        <stop offset="0%" stop-color="#ffffff" />
+                        <stop offset="30%" stop-color="#fdf2f8" />
+                        <stop offset="65%" stop-color="#f472b6" />
+                        <stop offset="85%" stop-color="#ec4899" />
+                        <stop offset="100%" stop-color="#c084fc" />
+                      </radialGradient>
+                      <radialGradient id="leafGrad" cx="30%" cy="30%" r="70%">
+                        <stop offset="0%" stop-color="#bef264" />
+                        <stop offset="45%" stop-color="#65a30d" />
+                        <stop offset="80%" stop-color="#3f6212" />
+                        <stop offset="100%" stop-color="#1e3a10" />
+                      </radialGradient>
+                    </defs>
+                    <!-- Green Leaves underneath -->
+                    <path d="M12,42 Q2,48 4,56 Q14,56 22,46 Z" fill="url(#leafGrad)" />
+                    <path d="M48,16 Q58,10 62,18 Q58,26 48,22 Z" fill="url(#leafGrad)" />
+                    <!-- Outer Petals: Frosted Pink & White with Lilac Tip -->
+                    <circle cx="32" cy="32" r="26" fill="url(#pinkChocoRoseGrad1)" opacity="0.95" />
+                    <!-- Piped Petal Layers -->
+                    <path d="M14,24 Q24,8 38,12 Q48,18 46,30 Q44,40 32,46 Q18,44 14,24 Z" fill="#ffffff" opacity="0.9" />
+                    <path d="M20,20 Q32,14 42,22 Q46,34 36,40 Q22,40 18,28 Z" fill="#fbcfe8" />
+                    <path d="M24,24 Q32,18 38,24 Q40,32 32,36 Q22,34 24,24 Z" fill="#f472b6" />
+                    <circle cx="31" cy="27" r="5" fill="#ffffff" />
+                  </svg>
+
+                  <!-- Blooming Rose 2 -->
+                  <svg class="artisan-rose rose-large-2" viewBox="0 0 54 54">
+                    <circle cx="27" cy="27" r="22" fill="url(#pinkChocoRoseGrad1)" opacity="0.95" />
+                    <path d="M12,20 Q22,8 34,12 Q42,18 40,28 Q36,38 26,40 Q14,38 12,20 Z" fill="#ffffff" opacity="0.92" />
+                    <path d="M18,18 Q28,14 36,20 Q38,30 30,34 Q20,34 16,24 Z" fill="#fbcfe8" />
+                    <path d="M22,22 Q28,18 34,22 Q34,28 28,30 Q22,30 20,24 Z" fill="#f472b6" />
+                    <circle cx="26" cy="24" r="4" fill="#ffffff" />
+                  </svg>
+                </div>
+
+                <!-- Curving Rosebuds along the top rim (like photo) -->
+                <div class="floral-arch-rim">
+                  <!-- Rosebud 1 (Top Left) -->
+                  <svg class="artisan-rosebud bud-1" viewBox="0 0 36 36">
+                    <path d="M8,26 Q12,32 18,30 Q16,22 10,24 Z" fill="url(#leafGrad)" />
+                    <ellipse cx="20" cy="16" rx="9" ry="12" fill="#f472b6" transform="rotate(-20 20 16)" />
+                    <path d="M14,14 Q22,8 26,16 Q22,24 16,20 Z" fill="#fbcfe8" />
+                  </svg>
+
+                  <!-- Rosebud 2 (Left Rim) -->
+                  <svg class="artisan-rosebud bud-2" viewBox="0 0 34 34">
+                    <path d="M6,22 Q8,28 14,26 Q14,20 8,20 Z" fill="url(#leafGrad)" />
+                    <ellipse cx="18" cy="15" rx="8" ry="11" fill="#f472b6" transform="rotate(-35 18 15)" />
+                    <path d="M13,13 Q20,8 24,15 Q20,22 15,18 Z" fill="#fdf2f8" />
+                  </svg>
+
+                  <!-- Rosebud 3 (Top Rim) -->
+                  <svg class="artisan-rosebud bud-3" viewBox="0 0 32 32">
+                    <ellipse cx="16" cy="14" rx="7" ry="10" fill="#f472b6" transform="rotate(15 16 14)" />
+                    <path d="M12,12 Q17,7 21,13 Q17,19 13,15 Z" fill="#fbcfe8" />
+                  </svg>
+                </div>
+
+                <!-- Loose Falling Petals along rim and side (like photo) -->
+                <div class="scattered-petals-group">
+                  <span class="loose-petal petal-1"></span>
+                  <span class="loose-petal petal-2"></span>
+                  <span class="loose-petal petal-3"></span>
+                  <span class="loose-petal petal-4"></span>
+                </div>
+
+                <!-- Plump Red Cherries Attached Directly Onto The Cake Body Surface -->
+                <div class="body-cherries-group" aria-hidden="true">
+                  <div class="body-cherry bc-1">
+                    <div class="glossy-cherry">
+                      <div class="cherry-shine"></div>
+                      <div class="cherry-stem"></div>
+                    </div>
+                    <div class="cherry-mint-leaf"></div>
+                    <div class="cream-affix"></div>
+                  </div>
+                  <div class="body-cherry bc-2">
+                    <div class="glossy-cherry">
+                      <div class="cherry-shine"></div>
+                      <div class="cherry-stem"></div>
+                    </div>
+                    <div class="cream-affix"></div>
+                  </div>
+                  <div class="body-cherry bc-3">
+                    <div class="glossy-cherry">
+                      <div class="cherry-shine"></div>
+                      <div class="cherry-stem"></div>
+                    </div>
+                    <div class="cherry-mint-leaf"></div>
+                    <div class="cream-affix"></div>
+                  </div>
+                  <div class="body-cherry bc-4">
+                    <div class="glossy-cherry">
+                      <div class="cherry-shine"></div>
+                      <div class="cherry-stem"></div>
+                    </div>
+                    <div class="cream-affix"></div>
+                  </div>
+                  <div class="body-cherry bc-5">
+                    <div class="glossy-cherry">
+                      <div class="cherry-shine"></div>
+                      <div class="cherry-stem"></div>
+                    </div>
+                    <div class="cherry-mint-leaf"></div>
+                    <div class="cream-affix"></div>
+                  </div>
+                </div>
+
+                <!-- Bottom Front Rose Accent (like photo) -->
+                <div class="floral-bottom-front">
+                  <svg class="artisan-rose rose-bottom-front" viewBox="0 0 48 48">
+                    <!-- Leaves -->
+                    <path d="M4,28 Q0,36 8,40 Q16,36 14,28 Z" fill="url(#leafGrad)" />
+                    <path d="M44,28 Q48,36 40,40 Q32,36 34,28 Z" fill="url(#leafGrad)" />
+                    <!-- Rose -->
+                    <circle cx="24" cy="24" r="18" fill="url(#pinkChocoRoseGrad1)" />
+                    <path d="M12,18 Q20,10 28,14 Q34,20 32,28 Q28,34 20,34 Q12,32 12,18 Z" fill="#fbcfe8" />
+                    <path d="M16,18 Q24,14 30,20 Q30,28 22,30 Q16,28 16,18 Z" fill="#f472b6" />
+                    <circle cx="23" cy="22" r="4" fill="#fdf2f8" />
+                  </svg>
+                  <span class="loose-petal petal-bottom-1"></span>
+                  <span class="loose-petal petal-bottom-2"></span>
+                </div>
+              </div>
+
+              <!-- Square Pink-Chocolate Display Board (like photo) -->
+              <div class="square-cake-board">
+                <div class="board-top-surface"></div>
+                <div class="board-side-bevel"></div>
+              </div>
+
+            </div>
+          </div>
+
+          <button id="btn-blow-candles" class="btn-ocean" style="margin-top: 24px;" aria-label="Tiup lilin">
+            Tiup Lilin 🕯️
+          </button>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           STAGE 3: CUT THE CAKE (TOP-DOWN ARTISAN ROUND CAKE & PIZZA SLICE)
+           ================================================================ -->
+      <section id="stage-cake" class="stage-section" aria-label="Cut the cake stage">
+        <h2 class="editorial-title">Potong Kue Ulang Tahun 🍰</h2>
+        <p id="cake-cut-instruction" class="editorial-sub">Sentuh sepotong kue atau klik tombol untuk mengambil sepotong kue spesialmu.</p>
+
+        <div id="cake-cut-wrapper" style="position: relative; margin-top: 18px; display: flex; flex-direction: column; align-items: center;">
+          <div class="topdown-cake-scene">
+            
+            <!-- Ornate Luxury Wedding / Birthday Cake Knife -->
+            <div id="virtual-knife" role="slider" aria-valuemin="0" aria-valuemax="100" aria-label="Pisau kue berukir">
+              <!-- Antique Gold Pommel -->
+              <div class="knife-pommel"></div>
+              <!-- Mother of Pearl / Carved Handle -->
+              <div class="knife-handle-ornate">
+                <span class="handle-filigree"></span>
+                <!-- Silk Ribbon Bow Accent -->
+                <div class="knife-ribbon-bow">
+                  <span class="ribbon-knot"></span>
+                  <span class="ribbon-tail-left"></span>
+                  <span class="ribbon-tail-right"></span>
+                </div>
+              </div>
+              <!-- Gold Bolster with Gem -->
+              <div class="knife-bolster">
+                <span class="bolster-gem"></span>
+              </div>
+              <!-- Damascus Filigree Blade with Glint -->
+              <div class="knife-blade-ornate">
+                <div class="blade-edge-shine"></div>
+                <div class="blade-filigree-vines"></div>
+                <span class="knife-sparkle-glint">✦</span>
+              </div>
+            </div>
+
+            <!-- Top-Down Circular Artisan Cake (Vector SVG for pristine realism) -->
+            <div class="topdown-cake-svg-wrapper">
+              <svg id="topdown-cake-svg" viewBox="0 0 320 320" width="100%" height="100%">
+                <defs>
+                  <!-- Porcelain Plate Gradients -->
+                  <radialGradient id="porcelainGrad" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#ffffff" />
+                    <stop offset="70%" stop-color="#f8fafc" />
+                    <stop offset="92%" stop-color="#e2e8f0" />
+                    <stop offset="100%" stop-color="#cbd5e1" />
+                  </radialGradient>
+                  
+                  <linearGradient id="goldPlateRim" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#fef08a" />
+                    <stop offset="35%" stop-color="#ca8a04" />
+                    <stop offset="70%" stop-color="#fef08a" />
+                    <stop offset="100%" stop-color="#a16207" />
+                  </linearGradient>
+
+                  <!-- Velvet Pink Strawberry Ganache Top Glaze -->
+                  <radialGradient id="topCakeGlaze" cx="42%" cy="40%" r="60%">
+                    <stop offset="0%" stop-color="#fda4af" />
+                    <stop offset="45%" stop-color="#fb7185" />
+                    <stop offset="80%" stop-color="#f43f5e" />
+                    <stop offset="100%" stop-color="#9f1239" />
+                  </radialGradient>
+
+                  <!-- Melted Chocolate Ganache Drip / Swirl -->
+                  <linearGradient id="chocoSwirlGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#78350f" />
+                    <stop offset="60%" stop-color="#451a03" />
+                    <stop offset="100%" stop-color="#291004" />
+                  </linearGradient>
+
+                  <!-- Whipped Cream Swirl -->
+                  <radialGradient id="creamRosetteGrad" cx="35%" cy="30%" r="65%">
+                    <stop offset="0%" stop-color="#ffffff" />
+                    <stop offset="55%" stop-color="#fff1f2" />
+                    <stop offset="85%" stop-color="#fce7f3" />
+                    <stop offset="100%" stop-color="#fbcfe8" />
+                  </radialGradient>
+
+                  <!-- 3D Glossy Ruby Cherry -->
+                  <radialGradient id="glossyCherryGrad" cx="35%" cy="32%" r="65%">
+                    <stop offset="0%" stop-color="#ffedd5" stop-opacity="0.9" />
+                    <stop offset="25%" stop-color="#f43f5e" />
+                    <stop offset="65%" stop-color="#e11d48" />
+                    <stop offset="90%" stop-color="#9f1239" />
+                    <stop offset="100%" stop-color="#4c0519" />
+                  </radialGradient>
+                </defs>
+
+                <!-- Porcelain Cake Plate Shadow -->
+                <circle cx="160" cy="164" r="148" fill="rgba(0, 0, 0, 0.45)" filter="blur(8px)" />
+
+                <!-- Porcelain Plate (Tampak Atas) -->
+                <circle cx="160" cy="160" r="148" fill="url(#porcelainGrad)" stroke="url(#goldPlateRim)" stroke-width="4.5" />
+                <circle cx="160" cy="160" r="136" fill="none" stroke="rgba(202, 138, 4, 0.45)" stroke-width="1.5" stroke-dasharray="5,4" />
+                <circle cx="160" cy="160" r="126" fill="none" stroke="rgba(203, 213, 225, 0.5)" stroke-width="1" />
+
+                <!-- Cake Drop Shadow on Plate -->
+                <circle cx="160" cy="163" r="120" fill="rgba(0, 0, 0, 0.35)" filter="blur(6px)" />
+
+                <!-- ====================================================
+                     1. MAIN REMAINING CAKE (312° Circle with wedge gap)
+                     Center=(160,160), R=118.
+                     Cut points: P1=(267.8, 112.0), P2=(267.8, 208.0)
+                     ==================================================== -->
+                <g id="main-cake-body" class="main-cake-group">
+                  <!-- Cake Base Glaze Body -->
+                  <path d="M 160,160 L 267.8,208.0 A 118,118 0 1,1 267.8,112.0 Z" fill="url(#topCakeGlaze)" stroke="rgba(159, 18, 57, 0.6)" stroke-width="1.5" />
+
+                  <!-- Chocolate Ganache Dripping Swirl Ring -->
+                  <path d="M 160,160 L 260,203 A 110,110 0 1,1 260,117 Z" fill="none" stroke="url(#chocoSwirlGrad)" stroke-width="8" stroke-dasharray="18,10" opacity="0.6" />
+
+                  <!-- Inner Golden Dust Sprinkles -->
+                  <g class="glaze-sprinkles" opacity="0.85">
+                    <circle cx="110" cy="130" r="2.2" fill="#fbbf24" />
+                    <circle cx="125" cy="195" r="1.8" fill="#ffffff" />
+                    <circle cx="95" cy="170" r="2.5" fill="#fef08a" />
+                    <circle cx="165" cy="115" r="2.2" fill="#fbbf24" />
+                    <circle cx="185" cy="95" r="2.0" fill="#ffffff" />
+                    <circle cx="145" cy="220" r="2.2" fill="#fef08a" />
+                    <circle cx="180" cy="215" r="1.8" fill="#fbbf24" />
+                    <circle cx="75" cy="140" r="2.0" fill="#ffffff" />
+                    <circle cx="130" cy="80" r="2.4" fill="#fbbf24" />
+                    <circle cx="105" cy="210" r="2.0" fill="#fef08a" />
+                    <circle cx="215" cy="225" r="2.2" fill="#ffffff" />
+                  </g>
+
+                  <!-- Exposed Cut Interior Sponge Face (Top Cut Wall) -->
+                  <g class="cut-interior-face cut-face-top" opacity="0">
+                    <line x1="160" y1="160" x2="267.8" y2="112.0" stroke="#f472b6" stroke-width="6" stroke-linecap="round" />
+                    <line x1="160" y1="160" x2="267.8" y2="112.0" stroke="#fff1f2" stroke-width="3" stroke-linecap="round" />
+                    <line x1="160" y1="160" x2="267.8" y2="112.0" stroke="#451a03" stroke-width="1.5" stroke-dasharray="4,3" />
+                  </g>
+
+                  <!-- Exposed Cut Interior Sponge Face (Bottom Cut Wall) -->
+                  <g class="cut-interior-face cut-face-bottom" opacity="0">
+                    <line x1="160" y1="160" x2="267.8" y2="208.0" stroke="#f472b6" stroke-width="6" stroke-linecap="round" />
+                    <line x1="160" y1="160" x2="267.8" y2="208.0" stroke="#fff1f2" stroke-width="3" stroke-linecap="round" />
+                    <line x1="160" y1="160" x2="267.8" y2="208.0" stroke="#451a03" stroke-width="1.5" stroke-dasharray="4,3" />
+                  </g>
+
+                  <!-- Center Heart Plaque (Tampak Atas) -->
+                  <g class="cake-center-plaque" transform="translate(136, 160)">
+                    <circle cx="0" cy="0" r="20" fill="url(#chocoSwirlGrad)" stroke="url(#goldPlateRim)" stroke-width="2" />
+                    <!-- Piped Cream Heart -->
+                    <path d="M 0,7 C -10,0 -12,-7 -6,-10 C -2,-12 0,-9 0,-6 C 0,-9 2,-12 6,-10 C 12,-7 10,0 0,7 Z" fill="#ffffff" opacity="0.95" />
+                    <circle cx="0" cy="-2" r="1.5" fill="#f43f5e" />
+                  </g>
+
+                  <!-- Piped Whipped Cream Rosettes & Cherries along the remaining circumference -->
+                  <!-- Rosette 1 (45°): (232, 232) -->
+                  <g class="rosette-group" transform="translate(232, 232)">
+                    <circle cx="0" cy="0" r="14" fill="url(#creamRosetteGrad)" stroke="rgba(244, 114, 182, 0.4)" stroke-width="1" />
+                    <path d="M-8,-4 Q0,-12 8,-4 Q12,6 0,10 Q-10,6 -8,-4 Z" fill="#ffffff" opacity="0.85" />
+                    <circle cx="0" cy="0" r="8.5" fill="url(#glossyCherryGrad)" />
+                    <circle cx="-2.5" cy="-2.5" r="2.2" fill="#ffffff" opacity="0.9" />
+                    <path d="M0,-8 Q3,-18 10,-20" stroke="#78350f" stroke-width="1.6" fill="none" stroke-linecap="round" />
+                  </g>
+
+                  <!-- Rosette 2 (90°): (160, 262) -->
+                  <g class="rosette-group" transform="translate(160, 262)">
+                    <circle cx="0" cy="0" r="14" fill="url(#creamRosetteGrad)" stroke="rgba(244, 114, 182, 0.4)" stroke-width="1" />
+                    <path d="M-8,-4 Q0,-12 8,-4 Q12,6 0,10 Q-10,6 -8,-4 Z" fill="#ffffff" opacity="0.85" />
+                    <circle cx="0" cy="0" r="8.5" fill="url(#glossyCherryGrad)" />
+                    <circle cx="-2.5" cy="-2.5" r="2.2" fill="#ffffff" opacity="0.9" />
+                    <path d="M0,-8 Q3,-18 9,-21" stroke="#78350f" stroke-width="1.6" fill="none" stroke-linecap="round" />
+                  </g>
+
+                  <!-- Rosette 3 (135°): (88, 232) -->
+                  <g class="rosette-group" transform="translate(88, 232)">
+                    <circle cx="0" cy="0" r="14" fill="url(#creamRosetteGrad)" stroke="rgba(244, 114, 182, 0.4)" stroke-width="1" />
+                    <path d="M-8,-4 Q0,-12 8,-4 Q12,6 0,10 Q-10,6 -8,-4 Z" fill="#ffffff" opacity="0.85" />
+                    <circle cx="0" cy="0" r="8.5" fill="url(#glossyCherryGrad)" />
+                    <circle cx="-2.5" cy="-2.5" r="2.2" fill="#ffffff" opacity="0.9" />
+                    <path d="M0,-8 Q-4,-18 -10,-20" stroke="#78350f" stroke-width="1.6" fill="none" stroke-linecap="round" />
+                  </g>
+
+                  <!-- Rosette 4 (180°): (58, 160) -->
+                  <g class="rosette-group" transform="translate(58, 160)">
+                    <circle cx="0" cy="0" r="14" fill="url(#creamRosetteGrad)" stroke="rgba(244, 114, 182, 0.4)" stroke-width="1" />
+                    <path d="M-8,-4 Q0,-12 8,-4 Q12,6 0,10 Q-10,6 -8,-4 Z" fill="#ffffff" opacity="0.85" />
+                    <circle cx="0" cy="0" r="8.5" fill="url(#glossyCherryGrad)" />
+                    <circle cx="-2.5" cy="-2.5" r="2.2" fill="#ffffff" opacity="0.9" />
+                    <path d="M0,-8 Q-5,-17 -11,-18" stroke="#78350f" stroke-width="1.6" fill="none" stroke-linecap="round" />
+                  </g>
+
+                  <!-- Rosette 5 (225°): (88, 88) -->
+                  <g class="rosette-group" transform="translate(88, 88)">
+                    <circle cx="0" cy="0" r="14" fill="url(#creamRosetteGrad)" stroke="rgba(244, 114, 182, 0.4)" stroke-width="1" />
+                    <path d="M-8,-4 Q0,-12 8,-4 Q12,6 0,10 Q-10,6 -8,-4 Z" fill="#ffffff" opacity="0.85" />
+                    <circle cx="0" cy="0" r="8.5" fill="url(#glossyCherryGrad)" />
+                    <circle cx="-2.5" cy="-2.5" r="2.2" fill="#ffffff" opacity="0.9" />
+                    <path d="M0,-8 Q-3,-18 -9,-20" stroke="#78350f" stroke-width="1.6" fill="none" stroke-linecap="round" />
+                  </g>
+
+                  <!-- Rosette 6 (270°): (160, 58) -->
+                  <g class="rosette-group" transform="translate(160, 58)">
+                    <circle cx="0" cy="0" r="14" fill="url(#creamRosetteGrad)" stroke="rgba(244, 114, 182, 0.4)" stroke-width="1" />
+                    <path d="M-8,-4 Q0,-12 8,-4 Q12,6 0,10 Q-10,6 -8,-4 Z" fill="#ffffff" opacity="0.85" />
+                    <circle cx="0" cy="0" r="8.5" fill="url(#glossyCherryGrad)" />
+                    <circle cx="-2.5" cy="-2.5" r="2.2" fill="#ffffff" opacity="0.9" />
+                    <path d="M0,-8 Q3,-18 10,-21" stroke="#78350f" stroke-width="1.6" fill="none" stroke-linecap="round" />
+                  </g>
+
+                  <!-- Rosette 7 (315°): (232, 88) -->
+                  <g class="rosette-group" transform="translate(232, 88)">
+                    <circle cx="0" cy="0" r="14" fill="url(#creamRosetteGrad)" stroke="rgba(244, 114, 182, 0.4)" stroke-width="1" />
+                    <path d="M-8,-4 Q0,-12 8,-4 Q12,6 0,10 Q-10,6 -8,-4 Z" fill="#ffffff" opacity="0.85" />
+                    <circle cx="0" cy="0" r="8.5" fill="url(#glossyCherryGrad)" />
+                    <circle cx="-2.5" cy="-2.5" r="2.2" fill="#ffffff" opacity="0.9" />
+                    <path d="M0,-8 Q5,-17 12,-18" stroke="#78350f" stroke-width="1.6" fill="none" stroke-linecap="round" />
+                  </g>
+                </g>
+
+                <!-- ====================================================
+                     2. THE PIZZA CAKE SLICE (Sepotong Kue / 48° Wedge)
+                     Center=(160,160), P1=(267.8, 112.0), P2=(267.8, 208.0)
+                     ==================================================== -->
+                <g id="pizza-slice-wedge" class="pizza-slice-group" role="button" tabindex="0" aria-label="Sepotong kue ulang tahun">
+                  <!-- Wedge Drop Shadow when pulled out -->
+                  <path class="wedge-shadow" d="M 160,160 L 267.8,112.0 A 118,118 0 0,1 267.8,208.0 Z" fill="rgba(0,0,0,0.4)" filter="blur(5px)" opacity="0" />
+
+                  <!-- Wedge Main Body (Perfect fit before cut) -->
+                  <path class="wedge-body" d="M 160,160 L 267.8,112.0 A 118,118 0 0,1 267.8,208.0 Z" fill="url(#topCakeGlaze)" stroke="rgba(159, 18, 57, 0.5)" stroke-width="1.2" />
+
+                  <!-- Chocolate Ganache Drip across outer curved crust -->
+                  <path d="M 260,117 A 110,110 0 0,1 260,203" fill="none" stroke="url(#chocoSwirlGrad)" stroke-width="8" stroke-dasharray="14,8" opacity="0.65" />
+
+                  <!-- Wedge Top Exposed Layer Lines (Visible when sliced apart) -->
+                  <!-- Top Edge Sponge Layer (Line P1 to Center) -->
+                  <g class="slice-side-layers side-top" opacity="0">
+                    <line x1="160" y1="160" x2="267.8" y2="112.0" stroke="#f472b6" stroke-width="5" stroke-linecap="round" />
+                    <line x1="160" y1="160" x2="267.8" y2="112.0" stroke="#fff1f2" stroke-width="2.5" stroke-linecap="round" />
+                    <line x1="160" y1="160" x2="267.8" y2="112.0" stroke="#451a03" stroke-width="1.2" stroke-dasharray="3,3" />
+                  </g>
+
+                  <!-- Bottom Edge Sponge Layer (Line P2 to Center) -->
+                  <g class="slice-side-layers side-bottom" opacity="0">
+                    <line x1="160" y1="160" x2="267.8" y2="208.0" stroke="#f472b6" stroke-width="5" stroke-linecap="round" />
+                    <line x1="160" y1="160" x2="267.8" y2="208.0" stroke="#fff1f2" stroke-width="2.5" stroke-linecap="round" />
+                    <line x1="160" y1="160" x2="267.8" y2="208.0" stroke="#451a03" stroke-width="1.2" stroke-dasharray="3,3" />
+                  </g>
+
+                  <!-- Golden Sparkle Stars on Slice -->
+                  <circle cx="210" cy="148" r="2.2" fill="#fbbf24" />
+                  <circle cx="235" cy="172" r="1.8" fill="#ffffff" />
+                  <circle cx="195" cy="162" r="2.0" fill="#fef08a" />
+                  <circle cx="245" cy="140" r="1.6" fill="#fbbf24" />
+
+                  <!-- Whipped Cream Rosette & Glossy Cherry on Slice Rim (0° / Right Center) -->
+                  <g class="rosette-group" transform="translate(262, 160)">
+                    <circle cx="0" cy="0" r="14.5" fill="url(#creamRosetteGrad)" stroke="rgba(244, 114, 182, 0.45)" stroke-width="1" />
+                    <path d="M-8,-4 Q0,-12 8,-4 Q12,6 0,10 Q-10,6 -8,-4 Z" fill="#ffffff" opacity="0.9" />
+                    <!-- Green Mint Leaf -->
+                    <path d="M-6,8 Q-14,14 -12,20 Q-4,18 2,12 Z" fill="#22c55e" opacity="0.9" />
+                    <!-- Glossy Cherry -->
+                    <circle cx="0" cy="0" r="9" fill="url(#glossyCherryGrad)" />
+                    <circle cx="-2.8" cy="-2.8" r="2.5" fill="#ffffff" opacity="0.95" />
+                    <!-- Curved Stem -->
+                    <path d="M0,-9 Q4,-18 12,-20" stroke="#78350f" stroke-width="1.8" fill="none" stroke-linecap="round" />
+                  </g>
+                </g>
+
+                <!-- Pizza Cut Dotted Guide Lines (Glows gently before cut) -->
+                <g class="pizza-cut-guides">
+                  <line x1="160" y1="160" x2="267.8" y2="112.0" stroke="#ffffff" stroke-width="2" stroke-dasharray="5,4" opacity="0.75" />
+                  <line x1="160" y1="160" x2="267.8" y2="208.0" stroke="#ffffff" stroke-width="2" stroke-dasharray="5,4" opacity="0.75" />
+                  <circle cx="160" cy="160" r="4" fill="#38bdf8" />
+                </g>
+              </svg>
+            </div>
+
+            <!-- Celebratory Badge Pop Up After Cut -->
+            <div id="cake-slice-banner" class="cake-slice-badge" style="display: none;">
+              <span>Sepotong kue manis untukmu 🍰✨</span>
+            </div>
+
+          </div>
+
+          <div style="display: flex; justify-content: center; margin-top: 24px;">
+            <button id="btn-slice-cake" class="btn-ocean" aria-label="Potong kue ulang tahun">
+              Potong Kue 🍰
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           STAGE 4: PHOTO RAIN (REALISTIC SEASIDE MEMORY RAIN)
+           ================================================================ -->
+      <section id="stage-photo-rain" class="stage-section" aria-label="Photo rain memories stage">
+        <!-- Rain Streaks Ambient Canvas (Glistening rain drizzle) -->
+        <canvas id="rain-canvas" aria-hidden="true"></canvas>
+
+        <!-- Falling Polaroids Memory Stream Container -->
+        <div id="photo-rain-layer"></div>
+
+        <div class="photo-rain-controls" style="position: absolute; bottom: 28px; z-index: 95; pointer-events: auto; display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; padding: 0 20px;">
+          <p class="editorial-sub" style="margin-bottom: 12px; text-shadow: 0 2px 10px rgba(0,0,0,0.85); pointer-events: none;">
+            “Setiap kenangan mengalir seperti rintik hujan yang menyejukkan...”
+          </p>
+          <button id="btn-open-letter" class="btn-ocean" style="position: relative; z-index: 100; pointer-events: auto; cursor: pointer;" aria-label="Buka surat ulang tahun">
+            Buka Surat Cinta ✉️
+          </button>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           STAGE 5: LONG TEXT / BIRTHDAY LETTER
+           ================================================================ -->
+      <section id="stage-letter" class="stage-section" aria-label="Birthday letter stage">
+        <div id="letter-card-container">
+          <!-- Letter Header with progress -->
+          <div class="letter-header">
+            <span id="letter-page-indicator" class="letter-indicator">LETTER 01 / 06</span>
+            <div id="letter-dots-container" class="letter-dots" aria-hidden="true"></div>
+          </div>
+
+          <!-- Letter Page Body -->
+          <div class="letter-body">
+            <p id="letter-content" class="letter-page-content"></p>
+          </div>
+
+          <!-- Letter Navigation -->
+          <div class="letter-nav">
+            <button id="btn-letter-prev" class="btn-nav-letter" aria-label="Halaman surat sebelumnya">
+              ← Prev
+            </button>
+            <button id="btn-letter-next" class="btn-nav-letter" style="color: #38bdf8; font-weight: 600;" aria-label="Halaman surat selanjutnya">
+              Next →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           STAGE 6: VOICE NOTE
+           ================================================================ -->
+      <section id="stage-voice" class="stage-section" aria-label="Voice note stage">
+        <h2 class="editorial-title">And finally...</h2>
+        <p class="editorial-sub" style="margin-bottom: 24px;">There is something I want you to hear.</p>
+
+        <div id="voice-card-container">
+          <!-- Voice Note Waveform Bars -->
+          <div class="voice-wave-container" aria-hidden="true">
+            <span class="voice-bar" style="height: 14px;"></span>
+            <span class="voice-bar" style="height: 24px; animation-delay: 0.1s;"></span>
+            <span class="voice-bar" style="height: 38px; animation-delay: 0.25s;"></span>
+            <span class="voice-bar" style="height: 20px; animation-delay: 0.15s;"></span>
+            <span class="voice-bar" style="height: 42px; animation-delay: 0.35s;"></span>
+            <span class="voice-bar" style="height: 28px; animation-delay: 0.05s;"></span>
+            <span class="voice-bar" style="height: 18px; animation-delay: 0.3s;"></span>
+            <span class="voice-bar" style="height: 32px; animation-delay: 0.2s;"></span>
+            <span class="voice-bar" style="height: 12px; animation-delay: 0.4s;"></span>
+          </div>
+
+          <!-- Play / Pause Circle Trigger -->
+          <button id="voice-play-trigger" class="voice-play-trigger" aria-label="Putar rekaman suara">
+            <svg id="voice-play-icon" width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+            <svg id="voice-pause-icon" width="26" height="26" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </svg>
+          </button>
+
+          <!-- Voice Progress Bar -->
+          <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; margin-top: 20px; overflow: hidden;">
+            <div id="voice-progress-fill" style="width: 0%; height: 100%; background: #38bdf8; transition: width 0.1s linear;"></div>
+          </div>
+
+          <!-- Time Display -->
+          <div id="voice-time-text" class="voice-timer">0:00 / 0:00</div>
+
+          <!-- Continue to ending button -->
+          <button id="btn-voice-finish" class="btn-ocean" style="margin-top: 24px;" aria-label="Lanjut ke penutup">
+            Lanjut ke Akhir Cerita ✨
+          </button>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           STAGE 7: FINAL ENDING
+           ================================================================ -->
+      <section id="stage-ending" class="stage-section" aria-label="Final ending stage">
+        <div id="ending-content-wrapper">
+          <p class="ending-kicker">HAPPY BIRTHDAY</p>
+          <h2 id="ending-partner-name" class="ending-name">Sayang</h2>
+          <p class="ending-wish">
+            “mamaff yah kalau typingnya banyak typonya hehe <3 ” <br />
+            “mamaf juga kalau kebanyakan ketikan ku :)” <br />
+            “semuga kmuu di umur yang suda 15 imnih“ <br />
+            “banyak bahagianya yah, jangan sedi sedi terus yah“ <br />
+            “aku gamau kmu banyak sedinyaa.. dan jangan seperti kemrin yah jangan ikut ikut yang ndaa ener okeii.lopyouuu...
+          </p>
+
+          <button id="btn-replay" class="btn-ocean" aria-label="Ulangi perjalanan cerita">
+            Replay Our Story ↻
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- App Engine Script -->
+    <script type="module" src="./script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,2126 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
+
+/* ==========================================================================
+   A BIRTHDAY BY THE SEA - ARTISAN SEASIDE EXPERIENCE
+   ========================================================================== */
+
+:root {
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Seaside Palette */
+  --c-deep-ocean: #091a28;
+  --c-night-sea: #050d18;
+  --c-twilight-sky: #1b263b;
+  --c-sunset-sky: #415a77;
+  --c-sunset-gold: #f4a261;
+  --c-sunset-peach: #e76f51;
+  --c-sea-foam: #e0f2fe;
+  --c-soft-cyan: #38bdf8;
+  --c-sand: #fefae0;
+  --c-sand-dark: #d4a373;
+  --c-text-primary: #ffffff;
+  --c-text-muted: rgba(255, 255, 255, 0.75);
+
+  /* Matcha Latte Wedding Cake Palette */
+  --c-matcha-dark: #386641;
+  --c-matcha-base: #6a994e;
+  --c-matcha-soft: #a7c957;
+  --c-matcha-cream: #d8f3dc;
+  --c-frosting-ivory: #fffdf5;
+  --c-gold-accent: #f59e0b;
+  --c-gold-pearl: #fde047;
+
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  font-family: var(--font-body);
+  background-color: var(--c-deep-ocean);
+  color: var(--c-text-primary);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Atmospheric Background Canvas & Waves */
+#scene-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: background 1.5s var(--ease-smooth);
+}
+
+/* Background Atmosphere Modes */
+.mood-day {
+  background: radial-gradient(circle at 50% 30%, #7dd3fc 0%, #38bdf8 35%, #0284c7 70%, #0369a1 100%);
+}
+
+.mood-sunset {
+  background: radial-gradient(circle at 50% 30%, #fed7aa 0%, #f472b6 25%, #c084fc 50%, #334155 85%, #0f172a 100%);
+}
+
+.mood-twilight {
+  background: radial-gradient(circle at 50% 50%, #818cf8 0%, #4f46e5 25%, #1e1b4b 70%, #090a1a 100%);
+}
+
+.mood-night {
+  background: radial-gradient(circle at 50% 25%, #1e293b 0%, #0f172a 40%, #030712 85%, #020617 100%);
+}
+
+/* Celestial Element (Sun / Moon / Sunset Orb) */
+#celestial-body {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  pointer-events: none;
+  transition: all 2s var(--ease-smooth);
+  z-index: 1;
+}
+
+.mood-day #celestial-body {
+  background: radial-gradient(circle, #fffbeb 0%, rgba(254, 240, 138, 0.9) 50%, rgba(253, 224, 71, 0) 70%);
+  box-shadow: 0 0 60px rgba(254, 240, 138, 0.8), 0 0 100px rgba(253, 224, 71, 0.4);
+}
+
+/* Placed high in the sky so it never overlaps or touches the cake */
+.mood-sunset #celestial-body {
+  top: 14%;
+  width: 96px;
+  height: 96px;
+  background: radial-gradient(circle, #ffffff 0%, #fed7aa 35%, #fb923c 70%, rgba(249, 115, 22, 0) 100%);
+  box-shadow: 0 0 70px rgba(251, 146, 60, 0.9), 0 0 130px rgba(234, 88, 12, 0.45);
+}
+
+.mood-twilight #celestial-body {
+  top: 18%;
+  opacity: 0.35;
+  transform: translateX(-50%) scale(0.8);
+}
+
+.mood-night #celestial-body {
+  top: 10%;
+  width: 65px;
+  height: 65px;
+  background: radial-gradient(circle, #ffffff 0%, #e2e8f0 70%, rgba(203, 213, 225, 0.8) 100%);
+  box-shadow: 0 0 45px rgba(255, 255, 255, 0.75), 0 0 90px rgba(186, 230, 253, 0.3);
+}
+
+/* Ambient Birds in the Upper Sky */
+.sky-birds-container {
+  position: absolute;
+  top: 4%;
+  left: 0;
+  width: 100%;
+  height: 28%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.sea-bird {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+  will-change: transform;
+  animation: birdFlyAcross linear infinite;
+}
+
+.bird-svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+  overflow: visible;
+}
+
+.bird-wings {
+  transform-origin: 50% 50%;
+  animation: birdWingFlap 1.2s ease-in-out infinite alternate;
+}
+
+/* Individual birds with staggered flight paths, heights, and flapping speeds */
+.bird-1 {
+  top: 18%;
+  width: 32px;
+  height: 16px;
+  animation-duration: 22s;
+  animation-delay: 0s;
+}
+.bird-1 .bird-wings {
+  animation-duration: 0.9s;
+}
+
+.bird-2 {
+  top: 38%;
+  width: 28px;
+  height: 14px;
+  animation-duration: 26s;
+  animation-delay: 4.5s;
+  opacity: 0.85;
+}
+.bird-2 .bird-wings {
+  animation-duration: 1.1s;
+}
+
+.bird-3 {
+  top: 10%;
+  width: 24px;
+  height: 12px;
+  animation-duration: 30s;
+  animation-delay: 9s;
+  opacity: 0.75;
+}
+.bird-3 .bird-wings {
+  animation-duration: 0.8s;
+}
+
+.bird-4 {
+  top: 55%;
+  width: 20px;
+  height: 10px;
+  animation-duration: 24s;
+  animation-delay: 14s;
+  opacity: 0.65;
+}
+.bird-4 .bird-wings {
+  animation-duration: 1.0s;
+}
+
+@keyframes birdFlyAcross {
+  0% {
+    transform: translate3d(-70px, 0, 0);
+  }
+  20% {
+    transform: translate3d(20vw, -10px, 0);
+  }
+  40% {
+    transform: translate3d(40vw, 6px, 0);
+  }
+  60% {
+    transform: translate3d(60vw, -8px, 0);
+  }
+  80% {
+    transform: translate3d(80vw, 5px, 0);
+  }
+  100% {
+    transform: translate3d(calc(100vw + 70px), 0, 0);
+  }
+}
+
+@keyframes birdWingFlap {
+  0% {
+    transform: scaleY(1) rotate(0deg);
+  }
+  50% {
+    transform: scaleY(0.2) rotate(3deg);
+  }
+  100% {
+    transform: scaleY(-0.85) rotate(-3deg);
+  }
+}
+
+/* Background Particle Canvas */
+#particle-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Dedicated Rain Streaks Ambient Canvas */
+#rain-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Ocean Waves Container */
+.waves-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 180px;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 3;
+}
+
+.wave-svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+.wave-back {
+  opacity: 0.35;
+  animation: waveMotionBack 16s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
+}
+
+.wave-mid {
+  opacity: 0.5;
+  bottom: -5px;
+  animation: waveMotionMid 11s cubic-bezier(0.36, 0.45, 0.63, 0.53) -4s infinite;
+}
+
+.wave-front {
+  opacity: 0.75;
+  bottom: -10px;
+  animation: waveMotionFront 8s cubic-bezier(0.36, 0.45, 0.63, 0.53) -2s infinite;
+}
+
+/* Authentic undulating ocean waves with horizontal flow and vertical swell */
+@keyframes waveMotionBack {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    transform: translate3d(-12.5%, -6px, 0);
+  }
+  50% {
+    transform: translate3d(-25%, 3px, 0);
+  }
+  75% {
+    transform: translate3d(-37.5%, -5px, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes waveMotionMid {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    transform: translate3d(-12.5%, -8px, 0);
+  }
+  50% {
+    transform: translate3d(-25%, 4px, 0);
+  }
+  75% {
+    transform: translate3d(-37.5%, -6px, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes waveMotionFront {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    transform: translate3d(-12.5%, -10px, 0);
+  }
+  50% {
+    transform: translate3d(-25%, 5px, 0);
+  }
+  75% {
+    transform: translate3d(-37.5%, -7px, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Floating Audio Control */
+#floating-music-btn {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 9999px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s var(--ease-smooth);
+}
+
+#floating-music-btn:hover {
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.music-disc {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  border-top-color: #38bdf8;
+  display: inline-block;
+}
+
+.music-disc.playing {
+  animation: spinDisc 3s linear infinite;
+}
+
+@keyframes spinDisc {
+  100% { transform: rotate(360deg); }
+}
+
+/* Stage Screens Management */
+.stage-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.97) translateY(12px);
+  transition: opacity 0.8s var(--ease-smooth), transform 0.8s var(--ease-smooth);
+}
+
+.stage-section.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1) translateY(0);
+}
+
+/* Typography & Titles */
+.editorial-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-align: center;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+  line-height: 1.15;
+}
+
+.editorial-sub {
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--c-text-muted);
+  text-align: center;
+  margin-top: 8px;
+  max-width: 480px;
+}
+
+/* Generic Ocean Buttons */
+.btn-ocean {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 9999px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  cursor: pointer;
+  transition: all 0.3s var(--ease-smooth);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  min-height: 46px;
+  touch-action: manipulation;
+}
+
+.btn-ocean:hover {
+  background: rgba(255, 255, 255, 0.26);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.btn-ocean:active {
+  transform: translateY(1px);
+}
+
+.btn-micro {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.btn-micro:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* ==========================================================================
+   STAGE 1: ENHANCED INTERACTIVE PUZZLE
+   ========================================================================== */
+
+#puzzle-container {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 380px;
+}
+
+.puzzle-top-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.puzzle-preview-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 40;
+  background: rgba(15, 23, 42, 0.9);
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  backdrop-filter: blur(16px);
+}
+
+.puzzle-preview-card img {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.puzzle-preview-card span {
+  font-size: 0.8rem;
+  color: #38bdf8;
+  margin-top: 8px;
+}
+
+.puzzle-board {
+  width: 300px;
+  height: 300px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 4px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 18px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  position: relative;
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.puzzle-board.almost-done {
+  border-color: rgba(253, 224, 71, 0.85);
+  box-shadow: 0 0 35px rgba(253, 224, 71, 0.5), 0 16px 40px rgba(0, 0, 0, 0.4);
+}
+
+.puzzle-slot {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  background-color: #0f172a;
+  background-repeat: no-repeat;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  touch-action: none;
+}
+
+.puzzle-slot:active {
+  cursor: grabbing;
+}
+
+.puzzle-slot.selected {
+  outline: 3px solid #38bdf8;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.8);
+  transform: scale(0.94);
+  z-index: 10;
+}
+
+.puzzle-slot.correct {
+  box-shadow: inset 0 0 0 2px rgba(52, 211, 153, 0.7);
+}
+
+.puzzle-slot.shake {
+  animation: puzzleShake 0.4s ease-in-out;
+}
+
+@keyframes puzzleShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.puzzle-hint-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fef08a;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.puzzle-status-bar {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 300px;
+  font-size: 0.85rem;
+}
+
+.puzzle-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.puzzle-progress-track {
+  width: 140px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+#puzzle-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #34d399);
+  transition: width 0.3s ease;
+}
+
+/* ==========================================================================
+   STAGE 2 & 3: MATCHA LATTE WEDDING / BIRTHDAY CAKE & ORNATE KNIFE
+   ========================================================================== */
+
+#cake-stage-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.cake-scene {
+  position: relative;
+  width: 320px;
+  height: 310px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* The Grand Cake Structure */
+.cake-structure {
+  position: relative;
+  width: 290px;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  transition: transform 0.6s var(--ease-smooth);
+}
+
+/* Single Candle Wrap - FIRMLY ANCHORED & CENTERED ON TOP TIER */
+.single-candle-wrap {
+  position: absolute;
+  bottom: 156px; /* Exactly touching the top surface of the chocolate top tier */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+}
+
+.candle-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  padding: 4px;
+  touch-action: manipulation;
+}
+
+.candle-flame-wrap {
+  width: 20px;
+  height: 30px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.candle-flame {
+  width: 12px;
+  height: 22px;
+  background: radial-gradient(ellipse at 50% 80%, #ffffff 0%, #fef08a 35%, #f97316 75%, rgba(234, 88, 12, 0) 100%);
+  border-radius: 50% 50% 35% 35% / 60% 60% 40% 40%;
+  box-shadow: 0 0 16px rgba(251, 146, 60, 0.95), 0 0 28px rgba(254, 240, 138, 0.7);
+  animation: flameFlicker 1.8s ease-in-out infinite;
+  transform-origin: 50% 90%;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  will-change: transform, box-shadow;
+}
+
+.candle-item.extinguished .candle-flame {
+  transform: scale(0);
+  opacity: 0;
+}
+
+@keyframes flameFlicker {
+  0% {
+    transform: scale(1, 1) rotate(-1deg);
+    box-shadow: 0 0 16px rgba(251, 146, 60, 0.95), 0 0 28px rgba(254, 240, 138, 0.7);
+  }
+  20% {
+    transform: scale(1.05, 0.95) rotate(1.5deg);
+    box-shadow: 0 0 19px rgba(251, 146, 60, 1), 0 0 32px rgba(254, 240, 138, 0.85);
+  }
+  40% {
+    transform: scale(0.96, 1.05) rotate(-2deg);
+    box-shadow: 0 0 14px rgba(251, 146, 60, 0.88), 0 0 25px rgba(254, 240, 138, 0.65);
+  }
+  60% {
+    transform: scale(1.06, 0.94) rotate(2deg);
+    box-shadow: 0 0 21px rgba(251, 146, 60, 1), 0 0 35px rgba(254, 240, 138, 0.9);
+  }
+  80% {
+    transform: scale(0.97, 1.03) rotate(-1.2deg);
+    box-shadow: 0 0 15px rgba(251, 146, 60, 0.92), 0 0 27px rgba(254, 240, 138, 0.72);
+  }
+  100% {
+    transform: scale(1, 1) rotate(-1deg);
+    box-shadow: 0 0 16px rgba(251, 146, 60, 0.95), 0 0 28px rgba(254, 240, 138, 0.7);
+  }
+}
+
+.candle-wick {
+  width: 2px;
+  height: 5px;
+  background: #1e293b;
+  border-radius: 1px;
+}
+
+/* Slender, proportionate candle stick (not too big) */
+.candle-stick {
+  width: 7px;
+  height: 30px;
+  background: linear-gradient(180deg, #fffbeb 0%, #fde68a 50%, #f59e0b 100%);
+  border-radius: 2px;
+  box-shadow: inset 1px 0 2px rgba(255,255,255,0.8), inset -1px 0 2px rgba(0,0,0,0.2);
+}
+
+/* Chocolate rosette base anchoring candle firmly to cake */
+.candle-choco-base {
+  width: 20px;
+  height: 8px;
+  margin-top: -3px;
+  background: radial-gradient(ellipse at 50% 60%, #4a2512 0%, #2e1509 60%, #1a0b05 100%);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+}
+
+.smoke-puff {
+  position: absolute;
+  top: -10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(226, 232, 240, 0.65);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.candle-item.extinguished .smoke-puff {
+  animation: smokeRise 1.2s ease-out forwards;
+}
+
+@keyframes smokeRise {
+  0% { opacity: 0.8; transform: translate(0, 0) scale(1); }
+  50% { opacity: 0.5; transform: translate(4px, -20px) scale(2); }
+  100% { opacity: 0; transform: translate(-3px, -45px) scale(3.5); }
+}
+
+/* ==========================================================================
+   ARTISAN PINK & WHITE FLORIST CAKE (MATCHING REFERENCE PHOTO EXACTLY)
+   ========================================================================== */
+
+.cake-pink-choco {
+  position: relative;
+  width: 290px;
+  height: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Curved Arc of Candles Following Cake Contour on Top of Cake */
+.candles-arc-container {
+  position: absolute;
+  bottom: 122px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 240px;
+  height: 80px;
+  z-index: 25;
+  pointer-events: none;
+}
+
+.candle-pod {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: auto;
+  transition: transform 0.3s ease;
+}
+
+/* 5 Candles following the elliptical curve of the round cake */
+.pod-1 { left: 10px; bottom: 0px; transform: rotate(-12deg); }
+.pod-2 { left: 58px; bottom: 12px; transform: rotate(-6deg); }
+.pod-3 { left: 110px; bottom: 18px; transform: rotate(0deg); } /* Center */
+.pod-4 { left: 162px; bottom: 12px; transform: rotate(6deg); }
+.pod-5 { left: 210px; bottom: 0px; transform: rotate(12deg); }
+
+.candle-pod .candle-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  touch-action: manipulation;
+  padding: 2px;
+}
+
+.candle-stick-pink {
+  width: 6px;
+  height: 26px;
+  background: linear-gradient(180deg, #ffffff 0%, #fff1f2 35%, #fbcfe8 75%, #f472b6 100%) !important;
+  box-shadow: inset 1px 0 2px rgba(255, 255, 255, 0.95), inset -1px 0 2px rgba(244, 114, 182, 0.3) !important;
+  border-radius: 2px;
+}
+
+.candle-cream-base {
+  width: 18px;
+  height: 7px;
+  background: radial-gradient(ellipse at 50% 50%, #ffffff 0%, #fff1f2 60%, #fbcfe8 100%);
+  border-radius: 50%;
+  margin-top: -2px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Plump Glossy Cherry & Fruit Base Underneath Each Candle */
+.cherry-base {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -2px;
+}
+
+.glossy-cherry {
+  position: relative;
+  width: 18px;
+  height: 16px;
+  background: radial-gradient(circle at 35% 30%, #ff4d6d 0%, #d90429 55%, #7a0016 100%);
+  border-radius: 50% 50% 45% 45%;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35), inset 0 -2px 3px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.glossy-cherry:hover {
+  transform: scale(1.08);
+}
+
+.cherry-shine {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  width: 5px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  transform: rotate(-25deg);
+  pointer-events: none;
+}
+
+.cherry-stem {
+  position: absolute;
+  top: -8px;
+  left: 8px;
+  width: 8px;
+  height: 10px;
+  border-left: 2px solid #65a30d;
+  border-top: 2px solid #65a30d;
+  border-top-left-radius: 8px;
+  transform: rotate(20deg);
+  pointer-events: none;
+}
+
+.cream-dollop {
+  width: 22px;
+  height: 8px;
+  background: radial-gradient(ellipse at 50% 50%, #ffffff 0%, #fff1f2 60%, #fbcfe8 100%);
+  border-radius: 50%;
+  margin-top: -3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Plump Red Cherries Attached Directly Onto The Cake Body Surface */
+.body-cherries-group {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 18;
+}
+
+.body-cherry {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.45));
+}
+
+.body-cherry .glossy-cherry {
+  width: 20px;
+  height: 18px;
+  background: radial-gradient(circle at 35% 30%, #ff4d6d 0%, #d90429 55%, #7a0016 100%);
+  border-radius: 50% 50% 45% 45%;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35), inset 0 -2px 3px rgba(0, 0, 0, 0.3);
+}
+
+.body-cherry .cherry-shine {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  width: 5px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
+  transform: rotate(-25deg);
+}
+
+.body-cherry .cherry-stem {
+  position: absolute;
+  top: -10px;
+  left: 9px;
+  width: 8px;
+  height: 12px;
+  border-left: 2px solid #65a30d;
+  border-top: 2px solid #65a30d;
+  border-top-left-radius: 8px;
+  transform: rotate(18deg);
+}
+
+/* Cream rosette anchoring the cherry onto the vertical cake body */
+.body-cherry .cream-affix {
+  width: 22px;
+  height: 7px;
+  background: radial-gradient(ellipse at 50% 50%, #ffffff 0%, #fff1f2 60%, #fbcfe8 100%);
+  border-radius: 50%;
+  margin-top: -3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.body-cherry .cherry-mint-leaf {
+  position: absolute;
+  bottom: 2px;
+  right: -5px;
+  width: 9px;
+  height: 5px;
+  background: linear-gradient(135deg, #bef264 0%, #4d7c0f 100%);
+  border-radius: 50% 0 50% 0;
+  transform: rotate(25deg);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Individual organic placement across the cake body surface */
+.bc-1 { top: 44px; left: 32px; transform: rotate(-8deg); }
+.bc-2 { top: 72px; left: 78px; transform: rotate(8deg); }
+.bc-3 { top: 82px; left: 122px; transform: rotate(-4deg); }
+.bc-4 { top: 50px; left: 164px; transform: rotate(12deg); }
+.bc-5 { top: 74px; left: 206px; transform: rotate(-10deg); }
+
+/* Round Cake Cylinder: Silky Pastel Baby-Pink Buttercream */
+.pink-choco-cylinder {
+  position: relative;
+  width: 260px;
+  height: 124px;
+  background: linear-gradient(180deg, #ffffff 0%, #fff0f5 20%, #fce7f3 55%, #fbcfe8 85%, #f472b6 100%);
+  border-radius: 20px 20px 10px 10px;
+  box-shadow: 0 10px 30px rgba(244, 114, 182, 0.3), 0 16px 45px rgba(0, 0, 0, 0.28), inset 0 2px 6px #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Luscious Melted Chocolate Ganache Drips on Cake Body */
+.choco-melt-drips-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 55px;
+  pointer-events: none;
+  z-index: 12;
+  overflow: visible;
+}
+
+.choco-melt-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+}
+
+.choco-drip-shine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: 20px 20px 0 0;
+  opacity: 0.8;
+}
+
+/* Recessed circular top framed by concentric piped cream ring (like photo) */
+.cake-top-recessed {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 245px;
+  height: 50px;
+  background: radial-gradient(ellipse at 50% 50%, #ffffff 0%, #fff5f8 50%, #fce7f3 100%);
+  border-radius: 50%;
+  box-shadow: inset 0 2px 6px rgba(244, 114, 182, 0.2), 0 2px 6px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.concentric-piped-rim {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  border-radius: 50%;
+  border: 2px double #ffffff;
+  box-shadow: inset 0 0 0 2px #fbcfe8, 0 0 0 2px #ffffff;
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+/* Scattered gleaming sugar pearls in the center */
+.scattered-pearls-group {
+  position: absolute;
+  width: 130px;
+  height: 30px;
+  pointer-events: none;
+}
+
+.sugar-pearl {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f8fafc 55%, #cbd5e1 100%);
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 0 4px rgba(255, 255, 255, 0.95);
+}
+
+.sugar-pearl.p1 { top: 6px; left: 24px; width: 5px; height: 5px; }
+.sugar-pearl.p2 { top: 12px; left: 40px; }
+.sugar-pearl.p3 { top: 8px; left: 58px; width: 5px; height: 5px; }
+.sugar-pearl.p4 { top: 18px; left: 50px; }
+.sugar-pearl.p5 { top: 14px; left: 74px; width: 4.5px; height: 4.5px; }
+.sugar-pearl.p6 { top: 20px; left: 88px; }
+.sugar-pearl.p7 { top: 10px; left: 96px; width: 5px; height: 5px; }
+.sugar-pearl.p8 { top: 16px; left: 110px; }
+.sugar-pearl.p9 { top: 8px; left: 16px; }
+.sugar-pearl.p10 { top: 22px; left: 32px; width: 4px; height: 4px; }
+.sugar-pearl.p11 { top: 14px; left: 66px; width: 3.5px; height: 3.5px; }
+.sugar-pearl.p12 { top: 22px; left: 70px; }
+
+/* Lush Piped Blooming Rose Bouquet on Top Right */
+.floral-cluster-top-right {
+  position: absolute;
+  top: -38px;
+  right: -6px;
+  width: 110px;
+  height: 90px;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.artisan-rose {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25));
+}
+
+.rose-large-1 {
+  position: absolute;
+  top: 0;
+  right: 4px;
+  width: 68px;
+  height: 68px;
+  transform: rotate(12deg);
+}
+
+.rose-large-2 {
+  position: absolute;
+  top: 18px;
+  right: 42px;
+  width: 54px;
+  height: 54px;
+  transform: rotate(-15deg);
+}
+
+/* Curving Rosebud Arch on Rim */
+.floral-arch-rim {
+  position: absolute;
+  top: -24px;
+  left: 10px;
+  width: 140px;
+  height: 50px;
+  pointer-events: none;
+  z-index: 18;
+}
+
+.artisan-rosebud {
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.2));
+}
+
+.bud-1 {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  width: 38px;
+  height: 38px;
+}
+
+.bud-2 {
+  position: absolute;
+  top: 2px;
+  left: 54px;
+  width: 34px;
+  height: 34px;
+}
+
+.bud-3 {
+  position: absolute;
+  top: 12px;
+  left: 98px;
+  width: 32px;
+  height: 32px;
+}
+
+/* Scattered Loose Petals */
+.scattered-petals-group {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 16;
+}
+
+.loose-petal {
+  position: absolute;
+  width: 14px;
+  height: 10px;
+  background: radial-gradient(ellipse at 40% 30%, #ffffff 0%, #fdf2f8 35%, #fbcfe8 75%, #f472b6 100%);
+  border-radius: 50% 50% 35% 35% / 60% 60% 40% 40%;
+  box-shadow: 0 2px 5px rgba(244, 114, 182, 0.35);
+  pointer-events: none;
+}
+
+.petal-1 { top: -6px; left: 30px; transform: rotate(-25deg); }
+.petal-2 { top: 2px; left: 85px; transform: rotate(15deg); }
+.petal-3 { top: 8px; right: 28px; transform: rotate(45deg); }
+.petal-4 { top: 22px; right: 8px; transform: rotate(70deg); }
+.petal-bottom-1 { position: absolute; bottom: -4px; left: -14px; transform: rotate(-35deg); }
+.petal-bottom-2 { position: absolute; bottom: -6px; right: -16px; transform: rotate(25deg); }
+
+/* Front Bottom Rose Accent (like photo) */
+.floral-bottom-front {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 48px;
+  pointer-events: none;
+  z-index: 22;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rose-bottom-front {
+  width: 48px;
+  height: 48px;
+}
+
+/* Square Display Board: Vibrant Pastel Pink (from photo) */
+.square-cake-board {
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 295px;
+  height: 38px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.board-top-surface {
+  width: 100%;
+  height: 28px;
+  background: linear-gradient(135deg, #fbcfe8 0%, #f472b6 40%, #ec4899 80%, #db2777 100%);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(219, 39, 119, 0.35), 0 4px 15px rgba(0, 0, 0, 0.25), inset 0 1px 3px rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.board-side-bevel {
+  width: 100%;
+  height: 10px;
+  background: linear-gradient(180deg, #db2777 0%, #be185d 100%);
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* ==========================================================================
+   CAKE CUT SPLITTING ANIMATION
+   ========================================================================== */
+
+.cake-splittable .cake-split-wrapper {
+  position: relative;
+  width: 290px;
+  height: 240px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.cake-splittable .cake-half {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 290px;
+  height: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  will-change: transform;
+}
+
+.cake-splittable .cake-half-left {
+  clip-path: polygon(0% 0%, 50% 0%, 50% 100%, 0% 100%);
+  transform-origin: 20% 100%;
+}
+
+.cake-splittable .cake-half-right {
+  clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%);
+  transform-origin: 80% 100%;
+}
+
+.cake-splittable.cut .cake-half-left {
+  animation: cakeSplitLeft 0.9s cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards;
+}
+
+.cake-splittable.cut .cake-half-right {
+  animation: cakeSplitRight 0.9s cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards;
+}
+
+@keyframes cakeSplitLeft {
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(-6px) rotate(-0.5deg);
+  }
+  65% {
+    transform: translateX(-24px) rotate(-3deg);
+  }
+  100% {
+    transform: translateX(-20px) rotate(-2.5deg);
+  }
+}
+
+@keyframes cakeSplitRight {
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(6px) rotate(0.5deg);
+  }
+  65% {
+    transform: translateX(24px) rotate(3deg);
+  }
+  100% {
+    transform: translateX(20px) rotate(2.5deg);
+  }
+}
+
+/* Sponge layers visible on sliced edge (Vanilla Sponge + Pink Cream) */
+.sliced-sponge-layers {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 14px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    180deg,
+    #ffffff 0px,
+    #ffffff 14px,
+    #f472b6 14px,
+    #f472b6 18px,
+    #fff5f7 18px,
+    #fff5f7 32px
+  );
+  box-shadow: inset 0 0 4px rgba(244, 114, 182, 0.4);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 28;
+}
+
+.cake-splittable.cut .sliced-sponge-layers {
+  opacity: 1;
+}
+
+.layer-edge-right {
+  right: calc(50% - 1px);
+}
+
+.layer-edge-left {
+  left: calc(50% - 1px);
+}
+
+/* Virtual Cut Guide Line */
+.cake-cut-line {
+  position: absolute;
+  top: 25px;
+  bottom: 10px;
+  left: 50%;
+  width: 2px;
+  background: dashed rgba(255, 255, 255, 0.7);
+  border-left: 2px dashed rgba(255, 255, 255, 0.85);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity 0.5s ease;
+  z-index: 25;
+}
+
+.cake-cut-line.visible {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   STAGE 3: TOP-DOWN ARTISAN ROUND CAKE & PIZZA SLICE
+   ========================================================================== */
+
+.topdown-cake-scene {
+  position: relative;
+  width: min(88vw, 320px);
+  height: min(88vw, 320px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.topdown-cake-svg-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.6));
+}
+
+#topdown-cake-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* Pizza Slice Wedge Group */
+.pizza-slice-group {
+  cursor: pointer;
+  transform-origin: 160px 160px;
+  transition: transform 0.95s cubic-bezier(0.18, 0.9, 0.28, 1.18), filter 0.5s ease;
+  will-change: transform;
+}
+
+.pizza-slice-group:hover {
+  filter: brightness(1.08);
+}
+
+/* Sliced Animation - The Pizza Slice Glides Outwards! */
+.topdown-cake-scene.cut .pizza-slice-group {
+  transform: translate(46px, 0px) rotate(3deg);
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.7));
+}
+
+.topdown-cake-scene.cut .wedge-shadow {
+  opacity: 0.6;
+  transition: opacity 0.6s ease;
+}
+
+.topdown-cake-scene.cut .slice-side-layers,
+.topdown-cake-scene.cut .cut-interior-face {
+  opacity: 1;
+  transition: opacity 0.4s ease 0.15s;
+}
+
+.topdown-cake-scene.cut .pizza-cut-guides {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.pizza-cut-guides {
+  animation: guidePulse 2.2s infinite ease-in-out;
+}
+
+@keyframes guidePulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.95; }
+}
+
+/* Celebratory slice badge */
+.cake-slice-badge {
+  position: absolute;
+  bottom: -15px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(253, 224, 71, 0.65);
+  padding: 8px 18px;
+  border-radius: 9999px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(253, 224, 71, 0.45);
+  backdrop-filter: blur(14px);
+  color: #fef08a;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+  z-index: 45;
+  animation: badgePopUp 0.6s cubic-bezier(0.18, 0.9, 0.28, 1.2) forwards;
+}
+
+@keyframes badgePopUp {
+  0% { transform: translateY(12px) scale(0.85); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* ==========================================================================
+   ORNATE CELEBRATION CAKE KNIFE
+   ========================================================================== */
+
+#virtual-knife {
+  position: absolute;
+  top: -45px;
+  right: 15px;
+  width: 48px;
+  height: 165px;
+  transform: rotate(38deg);
+  cursor: grab;
+  touch-action: none;
+  z-index: 40;
+  opacity: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+#virtual-knife.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#virtual-knife:active {
+  cursor: grabbing;
+}
+
+.topdown-cake-scene.cut #virtual-knife {
+  transform: translate(-30px, 50px) rotate(15deg) scale(0.95);
+  opacity: 0;
+  transition: transform 0.45s ease, opacity 0.4s ease 0.3s;
+}
+
+#virtual-knife:active {
+  cursor: grabbing;
+}
+
+.knife-pommel {
+  width: 14px;
+  height: 10px;
+  background: radial-gradient(circle, #fef08a 0%, #ca8a04 100%);
+  border-radius: 50% 50% 20% 20%;
+  box-shadow: 0 0 8px rgba(234, 179, 8, 0.7);
+}
+
+.knife-handle-ornate {
+  width: 16px;
+  height: 52px;
+  background: linear-gradient(90deg, #f8fafc 0%, #ffffff 40%, #e2e8f0 70%, #cbd5e1 100%);
+  border-radius: 3px 3px 6px 6px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35), inset 0 0 3px rgba(202, 138, 4, 0.6);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.handle-filigree {
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0px,
+    transparent 8px,
+    rgba(202, 138, 4, 0.6) 8px,
+    rgba(202, 138, 4, 0.6) 10px
+  );
+}
+
+/* Matcha Silk Ribbon Bow */
+.knife-ribbon-bow {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 16px;
+  pointer-events: none;
+}
+
+.ribbon-knot {
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: #a7c957;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.ribbon-tail-left {
+  position: absolute;
+  top: 5px;
+  left: 2px;
+  width: 10px;
+  height: 14px;
+  background: linear-gradient(135deg, #a7c957 0%, #6a994e 100%);
+  border-radius: 2px 6px 2px 6px;
+  transform: rotate(-25deg);
+}
+
+.ribbon-tail-right {
+  position: absolute;
+  top: 5px;
+  right: 2px;
+  width: 10px;
+  height: 14px;
+  background: linear-gradient(135deg, #a7c957 0%, #6a994e 100%);
+  border-radius: 6px 2px 6px 2px;
+  transform: rotate(25deg);
+}
+
+.knife-bolster {
+  width: 24px;
+  height: 10px;
+  background: linear-gradient(180deg, #fef08a 0%, #ca8a04 100%);
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bolster-gem {
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, #34d399 0%, #059669 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 6px #10b981;
+}
+
+.knife-blade-ornate {
+  width: 18px;
+  height: 94px;
+  background: linear-gradient(90deg, #f8fafc 0%, #ffffff 40%, #e2e8f0 70%, #94a3b8 100%);
+  clip-path: polygon(0% 0%, 100% 0%, 90% 85%, 0% 100%);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.85);
+  position: relative;
+  overflow: hidden;
+}
+
+.blade-edge-shine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: #ffffff;
+  box-shadow: 0 0 8px #ffffff;
+}
+
+.blade-filigree-vines {
+  position: absolute;
+  top: 8px;
+  right: 2px;
+  width: 8px;
+  height: 70px;
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0px,
+    transparent 6px,
+    rgba(202, 138, 4, 0.45) 6px,
+    rgba(202, 138, 4, 0.45) 8px
+  );
+}
+
+.knife-sparkle-glint {
+  position: absolute;
+  top: 15px;
+  left: 3px;
+  color: #fff;
+  font-size: 14px;
+  animation: glintPulse 1.8s infinite ease-in-out;
+}
+
+@keyframes glintPulse {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.3) rotate(20deg); }
+}
+
+/* ==========================================================================
+   STAGE 4: REALISTIC PHOTO MEMORY RAIN
+   ========================================================================== */
+
+#photo-rain-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Let clicks pass freely to buttons & controls! */
+  overflow: hidden;
+  z-index: 15;
+}
+
+.polaroid-item {
+  position: absolute;
+  background: #ffffff;
+  padding: 8px 8px 20px 8px;
+  border-radius: 6px;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45), 0 3px 8px rgba(0, 0, 0, 0.25);
+  pointer-events: auto; /* Polaroid cards are directly clickable */
+  cursor: pointer;
+  transform-origin: center center;
+  transition: box-shadow 0.3s ease, filter 0.3s ease;
+  will-change: transform, opacity;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.polaroid-item:active {
+  transform: scale(0.96);
+}
+
+/* Washi tape decoration at top of polaroid for authentic scrapbook realism */
+.washi-tape-strip {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 38px;
+  height: 12px;
+  background: rgba(254, 240, 138, 0.65);
+  backdrop-filter: blur(2px);
+  border-left: 2px dashed rgba(202, 138, 4, 0.35);
+  border-right: 2px dashed rgba(202, 138, 4, 0.35);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Glossy Photographic Glass Sheen & Droplet Texture */
+.polaroid-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.15) 100%);
+  pointer-events: none;
+  border-radius: 6px;
+}
+
+.polaroid-img-wrap {
+  width: 100%;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #0f172a;
+}
+
+.polaroid-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.polaroid-caption {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(0.82rem, 1.8vw, 0.98rem);
+  color: #1e293b;
+  text-align: center;
+  line-height: 1.25;
+  padding: 0 4px;
+}
+
+/* Layer variations for true rain depth across the full screen */
+.polaroid-item.layer-distant {
+  width: clamp(105px, 20vw, 130px);
+  filter: blur(1px) brightness(0.92);
+  opacity: 0.7;
+  z-index: 12;
+}
+
+.polaroid-item.layer-mid {
+  width: clamp(130px, 25vw, 160px);
+  opacity: 0.88;
+  z-index: 15;
+}
+
+.polaroid-item.layer-fore {
+  width: clamp(155px, 30vw, 190px);
+  opacity: 1;
+  z-index: 20;
+}
+
+/* Spotlight paused memory card on tap/click */
+.polaroid-item.spotlight {
+  position: fixed !important;
+  left: 50% !important;
+  top: 45% !important;
+  width: min(85vw, 290px) !important;
+  z-index: 1000 !important;
+  filter: none !important;
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) rotate(0deg) scale(1.08) !important;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.85), 0 0 50px rgba(56, 189, 248, 0.6) !important;
+  animation: spotlightFloat 4s ease-in-out infinite alternate;
+  pointer-events: auto !important;
+  cursor: pointer;
+}
+
+.photo-rain-controls {
+  position: absolute;
+  bottom: 28px;
+  z-index: 85;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  padding: 0 20px;
+}
+
+@keyframes spotlightFloat {
+  0% { transform: translate(-50%, -50%) rotate(-1deg) scale(1.08); }
+  100% { transform: translate(-50%, -50%) rotate(1.2deg) scale(1.12); }
+}
+
+/* Flash bloom transition effect */
+#bloom-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.8s ease-out;
+}
+
+#bloom-flash.active {
+  opacity: 0.92;
+}
+
+/* ==========================================================================
+   STAGE 5: BIRTHDAY LETTER (MULTI-PAGE)
+   ========================================================================== */
+
+#letter-card-container {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 24px;
+  padding: clamp(24px, 5vw, 36px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.letter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding-bottom: 14px;
+  margin-bottom: 20px;
+}
+
+.letter-indicator {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.letter-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.dot-step {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  transition: all 0.3s ease;
+}
+
+.dot-step.active {
+  background: #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
+  transform: scale(1.3);
+}
+
+.letter-body {
+  min-height: 180px;
+  max-height: clamp(260px, 52vh, 420px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  padding-right: 6px;
+  margin-right: -4px;
+}
+
+/* Elegant glass scrollbar for long messages */
+.letter-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.letter-body::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 9999px;
+}
+
+.letter-body::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.4);
+  border-radius: 9999px;
+}
+
+.letter-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.7);
+}
+
+.letter-page-content {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 3.2vw, 1.35rem);
+  line-height: 1.68;
+  color: #f8fafc;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.4s var(--ease-smooth), transform 0.4s var(--ease-smooth);
+  white-space: pre-wrap; /* Preserves paragraphs, enters, and spacing */
+  word-break: break-word;
+  width: 100%;
+}
+
+/* Auto smaller readable font for long essays/letters */
+.letter-page-content.long-text {
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+  line-height: 1.6;
+}
+
+.letter-page-content.fading-out {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.letter-page-content.fading-in {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.letter-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.btn-nav-letter {
+  background: none;
+  border: none;
+  color: #cbd5e1;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+  min-height: 44px;
+}
+
+.btn-nav-letter:hover:not(:disabled) {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-nav-letter:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   STAGE 6: VOICE NOTE PLAYER
+   ========================================================================== */
+
+#voice-card-container {
+  width: 100%;
+  max-width: 380px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  padding: 28px 24px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.voice-wave-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 48px;
+  margin: 20px 0;
+}
+
+.voice-bar {
+  width: 4px;
+  height: 12px;
+  background: #38bdf8;
+  border-radius: 2px;
+  transition: height 0.15s ease;
+}
+
+.voice-bar.active {
+  animation: waveBar 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes waveBar {
+  0% { height: 10px; }
+  100% { height: 42px; }
+}
+
+.voice-play-trigger {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.voice-play-trigger:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 35px rgba(56, 189, 248, 0.8);
+}
+
+.voice-play-trigger:active {
+  transform: scale(0.96);
+}
+
+.voice-timer {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--c-text-muted);
+  margin-top: 14px;
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   STAGE 7: FINAL ENDING
+   ========================================================================== */
+
+#ending-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 520px;
+  padding: 0 16px;
+  z-index: 20;
+}
+
+.ending-kicker {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #7dd3fc;
+  margin-bottom: 12px;
+}
+
+.ending-name {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 7vw, 4.2rem);
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 0 30px rgba(56, 189, 248, 0.7), 0 0 60px rgba(255, 255, 255, 0.4);
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.ending-wish {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 3.2vw, 1.55rem);
+  font-style: italic;
+  line-height: 1.6;
+  color: #e2e8f0;
+  max-width: 460px;
+  margin-bottom: 34px;
+}
+
+/* Helper buttons */
+.accessible-help-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.78rem;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.accessible-help-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}

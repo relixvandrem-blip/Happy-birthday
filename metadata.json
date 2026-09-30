@@ -1,0 +1,6 @@
+{
+  "name": "A Birthday by the Sea",
+  "description": "An interactive, cinematic, and romantic seaside birthday storytelling experience.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
